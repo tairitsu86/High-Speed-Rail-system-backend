@@ -1,0 +1,882 @@
+1.GetTrains
+格式規定
+Client:
+CommandType只能是{GetTrains}
+StartStation和ArriveStation只能是{南港,台北,板橋,桃園,新竹,苗栗,台中,彰化,雲林,嘉義,台南,左營}之一
+OneWayReturn只能是{True,False}之一
+StartDate和BackStartDate只能是{年/月/日}，不能有任何空格
+StartTime和BackStartTime只能是{時:秒}，不能有任何空格
+Type只能是{商務車廂,標準車廂}之一
+Prefer只能是{無偏好,靠走道優先,靠窗優先}之一
+Server:
+Status只會是{True,False}之一，如果是False則不保證後續屬性存在和正確與否
+Order，因為高鐵的資料裡車次會帶字母，所以當初就這樣存了，如果有問題我再把車次都改成純數字
+SeatCount是符合要求的該車次高鐵剩餘座位數
+StationsBy不停靠站值為00:00:00，停靠站值為非00:00:00，無論北上南下，順序均為{南港,台北,板橋,桃園,新竹,苗栗,台中,彰化,雲林,嘉義,台南,左營}
+TicketPrice回傳兩個數字和三個0，用逗點隔開，分別為全票和優惠票的單價，早鳥65折和幾張全票幾張優惠票什麼的前端自己搞，我只給這兩個單價
+資料中的車次不一定會照出發時間排序，最好自己再排序一下
+ 
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "GetTrains",
+  "StartStation": "南港",
+  "ArriveStation": "台北",
+  "OneWayReturn": "False",
+  "StartDate": "2022/11/1",
+  "StartTime": "08:00",
+  "BackStartDate": "2022/11/1",
+  "BackStartTime": "22:00",
+  "Type": "商務車廂",
+  "Prefer": "無偏好"
+}
+Server recall:
+{
+  "Status": "True",
+  "BackDatas": [
+    {
+      "Order": "D684",
+      "ArriveTime": "22:10:00",
+      "SeatCount": 64,
+      "StationsBy": "22:10:00,22:02:00,21:51:00,21:38:00,21:25:00,00:00:00,21:00:00,00:00:00,00:00:00,20:32:00,20:13:00,20:00:00",
+      "StartTime": "22:02:00"
+    },
+    {
+      "Order": "B160",
+      "ArriveTime": "22:40:00",
+      "SeatCount": 66,
+      "StationsBy": "22:40:00,22:32:00,22:21:00,00:00:00,00:00:00,00:00:00,21:39:00,00:00:00,00:00:00,00:00:00,00:00:00,20:55:00",
+      "StartTime": "22:32:00"
+    },
+    {
+      "Order": "F858",
+      "ArriveTime": "22:50:00",
+      "SeatCount": 66,
+      "StationsBy": "22:50:00,22:42:00,22:32:00,22:20:00,22:08:00,21:56:00,21:36:00,21:24:00,21:12:00,21:00:00,20:41:00,20:25:00",
+      "StartTime": "22:42:00"
+    },
+    {
+      "Order": "D690",
+      "ArriveTime": "23:15:00",
+      "SeatCount": 66,
+      "StationsBy": "23:15:00,23:07:00,22:56:00,22:43:00,22:30:00,00:00:00,22:05:00,00:00:00,00:00:00,21:37:00,21:18:00,21:05:00",
+      "StartTime": "23:07:00"
+    },
+    {
+      "Order": "F862",
+      "ArriveTime": "23:55:00",
+      "SeatCount": 66,
+      "StationsBy": "23:55:00,23:47:00,23:37:00,23:25:00,23:12:00,23:00:00,22:40:00,22:28:00,22:16:00,22:03:00,21:44:00,21:30:00",
+      "StartTime": "23:47:00"
+    },
+    {
+      "Order": "B'294",
+      "ArriveTime": "23:59:00",
+      "SeatCount": 66,
+      "StationsBy": "23:59:00,23:52:00,23:42:00,00:00:00,00:00:00,00:00:00,23:03:00,00:00:00,00:00:00,00:00:00,22:23:00,22:10:00",
+      "StartTime": "23:52:00"
+    }
+  ],
+  "Datas": [
+    {
+      "Order": "F809",
+      "ArriveTime": "08:11:00",
+      "SeatCount": 62,
+      "StationsBy": "08:00:00,08:11:00,08:19:00,08:34:00,08:47:00,08:58:00,09:17:00,09:30:00,09:41:00,09:55:00,10:13:00,10:25:00",
+      "StartTime": "08:00:00"
+    },
+    {
+      "Order": "D613",
+      "ArriveTime": "08:21:00",
+      "SeatCount": 66,
+      "StationsBy": "08:10:00,08:21:00,08:29:00,08:43:00,08:56:00,00:00:00,09:25:00,00:00:00,00:00:00,09:50:00,10:07:00,10:20:00",
+      "StartTime": "08:10:00"
+    },
+    {
+      "Order": "B113",
+      "ArriveTime": "08:31:00",
+      "SeatCount": 66,
+      "StationsBy": "08:20:00,08:31:00,08:39:00,00:00:00,00:00:00,00:00:00,09:20:00,00:00:00,00:00:00,00:00:00,00:00:00,10:05:00",
+      "StartTime": "08:20:00"
+    },
+    {
+      "Order": "D615",
+      "ArriveTime": "08:46:00",
+      "SeatCount": 66,
+      "StationsBy": "08:35:00,08:46:00,08:55:00,09:10:00,09:22:00,00:00:00,09:48:00,00:00:00,00:00:00,10:14:00,10:33:00,10:45:00",
+      "StartTime": "08:35:00"
+    },
+    {
+      "Order": "C1307",
+      "ArriveTime": "09:01:00",
+      "SeatCount": 66,
+      "StationsBy": "08:50:00,09:01:00,00:00:00,09:20:00,00:00:00,00:00:00,09:54:00,10:06:00,10:17:00,10:30:00,10:48:00,11:00:00",
+      "StartTime": "08:50:00"
+    },
+    {
+      "Order": "F813",
+      "ArriveTime": "09:11:00",
+      "SeatCount": 66,
+      "StationsBy": "09:00:00,09:11:00,09:19:00,09:34:00,09:47:00,09:58:00,10:17:00,10:30:00,10:41:00,10:55:00,11:13:00,11:25:00",
+      "StartTime": "09:00:00"
+    },
+    {
+      "Order": "D619",
+      "ArriveTime": "09:21:00",
+      "SeatCount": 66,
+      "StationsBy": "09:10:00,09:21:00,09:29:00,09:43:00,09:56:00,00:00:00,10:25:00,00:00:00,00:00:00,10:50:00,11:07:00,11:20:00",
+      "StartTime": "09:10:00"
+    },
+    {
+      "Order": "B117",
+      "ArriveTime": "09:31:00",
+      "SeatCount": 66,
+      "StationsBy": "09:20:00,09:31:00,09:39:00,00:00:00,00:00:00,00:00:00,10:20:00,00:00:00,00:00:00,00:00:00,00:00:00,11:05:00",
+      "StartTime": "09:20:00"
+    },
+    {
+      "Order": "D621",
+      "ArriveTime": "09:46:00",
+      "SeatCount": 66,
+      "StationsBy": "09:35:00,09:46:00,09:55:00,10:10:00,10:22:00,00:00:00,10:48:00,00:00:00,00:00:00,11:14:00,11:33:00,11:45:00",
+      "StartTime": "09:35:00"
+    },
+    {
+      "Order": "F817",
+      "ArriveTime": "10:11:00",
+      "SeatCount": 66,
+      "StationsBy": "10:00:00,10:11:00,10:19:00,10:34:00,10:47:00,10:58:00,11:17:00,11:30:00,11:41:00,11:55:00,12:13:00,12:25:00",
+      "StartTime": "10:00:00"
+    },
+    {
+      "Order": "D625",
+      "ArriveTime": "10:21:00",
+      "SeatCount": 66,
+      "StationsBy": "10:10:00,10:21:00,10:29:00,10:43:00,10:56:00,00:00:00,11:25:00,00:00:00,00:00:00,11:50:00,12:07:00,12:20:00",
+      "StartTime": "10:10:00"
+    },
+    {
+      "Order": "B121",
+      "ArriveTime": "10:31:00",
+      "SeatCount": 66,
+      "StationsBy": "10:20:00,10:31:00,10:39:00,00:00:00,00:00:00,00:00:00,11:20:00,00:00:00,00:00:00,00:00:00,00:00:00,12:05:00",
+      "StartTime": "10:20:00"
+    },
+    {
+      "Order": "D627",
+      "ArriveTime": "10:46:00",
+      "SeatCount": 66,
+      "StationsBy": "10:35:00,10:46:00,10:55:00,11:10:00,11:22:00,00:00:00,11:48:00,00:00:00,00:00:00,12:14:00,12:33:00,12:45:00",
+      "StartTime": "10:35:00"
+    },
+    {
+      "Order": "F821",
+      "ArriveTime": "11:11:00",
+      "SeatCount": 66,
+      "StationsBy": "11:00:00,11:11:00,11:19:00,11:34:00,11:47:00,11:58:00,12:17:00,12:30:00,12:41:00,12:55:00,13:13:00,13:25:00",
+      "StartTime": "11:00:00"
+    },
+    {
+      "Order": "B125",
+      "ArriveTime": "11:31:00",
+      "SeatCount": 66,
+      "StationsBy": "11:20:00,11:31:00,11:39:00,00:00:00,00:00:00,00:00:00,12:20:00,00:00:00,00:00:00,00:00:00,00:00:00,13:05:00",
+      "StartTime": "11:20:00"
+    },
+    {
+      "Order": "D633",
+      "ArriveTime": "11:46:00",
+      "SeatCount": 66,
+      "StationsBy": "11:35:00,11:46:00,11:55:00,12:10:00,12:22:00,00:00:00,12:48:00,00:00:00,00:00:00,13:14:00,13:33:00,13:45:00",
+      "StartTime": "11:35:00"
+    },
+    {
+      "Order": "F825.",
+      "ArriveTime": "12:11:00",
+      "SeatCount": 66,
+      "StationsBy": "12:00:00,12:11:00,12:19:00,12:34:00,12:47:00,12:58:00,13:17:00,13:30:00,13:41:00,13:55:00,14:13:00,14:25:00",
+      "StartTime": "12:00:00"
+    },
+    {
+      "Order": "B129",
+      "ArriveTime": "12:31:00",
+      "SeatCount": 66,
+      "StationsBy": "12:20:00,12:31:00,12:39:00,00:00:00,00:00:00,00:00:00,13:20:00,00:00:00,00:00:00,00:00:00,00:00:00,14:05:00",
+      "StartTime": "12:20:00"
+    },
+    {
+      "Order": "D639",
+      "ArriveTime": "12:46:00",
+      "SeatCount": 66,
+      "StationsBy": "12:35:00,12:46:00,12:55:00,13:10:00,13:22:00,00:00:00,13:48:00,00:00:00,00:00:00,14:14:00,14:33:00,14:45:00",
+      "StartTime": "12:35:00"
+    },
+    {
+      "Order": "F829",
+      "ArriveTime": "13:11:00",
+      "SeatCount": 66,
+      "StationsBy": "13:00:00,13:11:00,13:19:00,13:34:00,13:47:00,13:58:00,14:17:00,14:30:00,14:41:00,14:55:00,15:13:00,15:25:00",
+      "StartTime": "13:00:00"
+    },
+    {
+      "Order": "B133",
+      "ArriveTime": "13:31:00",
+      "SeatCount": 66,
+      "StationsBy": "13:20:00,13:31:00,13:39:00,00:00:00,00:00:00,00:00:00,14:20:00,00:00:00,00:00:00,00:00:00,00:00:00,15:05:00",
+      "StartTime": "13:20:00"
+    },
+    {
+      "Order": "D645",
+      "ArriveTime": "13:46:00",
+      "SeatCount": 66,
+      "StationsBy": "13:35:00,13:46:00,13:55:00,14:10:00,14:22:00,00:00:00,14:48:00,00:00:00,00:00:00,15:14:00,15:33:00,15:45:00",
+      "StartTime": "13:35:00"
+    },
+    {
+      "Order": "F833",
+      "ArriveTime": "14:11:00",
+      "SeatCount": 66,
+      "StationsBy": "14:00:00,14:11:00,14:19:00,14:34:00,14:47:00,15:58:00,15:17:00,15:30:00,15:41:00,15:55:00,16:13:00,16:25:00",
+      "StartTime": "14:00:00"
+    },
+    {
+      "Order": "B137",
+      "ArriveTime": "14:31:00",
+      "SeatCount": 66,
+      "StationsBy": "14:20:00,14:31:00,14:39:00,00:00:00,00:00:00,00:00:00,15:20:00,00:00:00,00:00:00,00:00:00,00:00:00,16:05:00",
+      "StartTime": "14:20:00"
+    },
+    {
+      "Order": "D651",
+      "ArriveTime": "14:46:00",
+      "SeatCount": 66,
+      "StationsBy": "14:35:00,14:46:00,14:55:00,15:10:00,15:22:00,00:00:00,15:48:00,00:00:00,00:00:00,16:14:00,16:33:00,16:45:00",
+      "StartTime": "14:35:00"
+    },
+    {
+      "Order": "F837",
+      "ArriveTime": "15:11:00",
+      "SeatCount": 66,
+      "StationsBy": "15:00:00,15:11:00,15:19:00,15:34:00,15:47:00,15:58:00,16:17:00,16:30:00,16:41:00,16:55:00,17:13:00,17:25:00",
+      "StartTime": "15:00:00"
+    },
+    {
+      "Order": "B141",
+      "ArriveTime": "15:31:00",
+      "SeatCount": 66,
+      "StationsBy": "15:20:00,15:31:00,15:39:00,00:00:00,00:00:00,00:00:00,16:20:00,00:00:00,00:00:00,00:00:00,00:00:00,17:05:00",
+      "StartTime": "15:20:00"
+    },
+    {
+      "Order": "D657",
+      "ArriveTime": "15:46:00",
+      "SeatCount": 66,
+      "StationsBy": "15:35:00,15:46:00,15:55:00,16:19:00,16:22:00,00:00:00,16:48:00,00:00:00,00:00:00,17:14:00,17:33:00,17:45:00",
+      "StartTime": "15:35:00"
+    },
+    {
+      "Order": "C1321",
+      "ArriveTime": "16:01:00",
+      "SeatCount": 66,
+      "StationsBy": "15:50:00,16:01:00,00:00:00,16:20:00,00:00:00,00:00:00,16:54:00,17:06:00,17:17:00,17:30:00,17:48:00,18:00:00",
+      "StartTime": "15:50:00"
+    },
+    {
+      "Order": "F841",
+      "ArriveTime": "16:11:00",
+      "SeatCount": 66,
+      "StationsBy": "16:00:00,16:11:00,16:19:00,16:34:00,16:47:00,16:58:00,17:17:00,17:30:00,17:41:00,17:55:00,18:13:00,18:25:00",
+      "StartTime": "16:00:00"
+    },
+    {
+      "Order": "D661",
+      "ArriveTime": "16:21:00",
+      "SeatCount": 66,
+      "StationsBy": "16:10:00,16:21:00,16:29:00,16:43:00,16:56:00,00:00:00,17:25:00,00:00:00,00:00:00,17:50:00,18:07:00,18:20:00",
+      "StartTime": "16:10:00"
+    },
+    {
+      "Order": "B145",
+      "ArriveTime": "16:31:00",
+      "SeatCount": 66,
+      "StationsBy": "16:20:00,16:31:00,16:39:00,00:00:00,00:00:00,00:00:00,17:20:00,00:00:00,00:00:00,00:00:00,00:00:00,18:05:00",
+      "StartTime": "16:20:00"
+    },
+    {
+      "Order": "D663",
+      "ArriveTime": "16:46:00",
+      "SeatCount": 66,
+      "StationsBy": "16:35:00,16:46:00,16:55:00,17:10:00,17:22:00,00:00:00,17:48:00,00:00:00,00:00:00,18:14:00,18:33:00,18:45:00",
+      "StartTime": "16:35:00"
+    },
+    {
+      "Order": "B'1241",
+      "ArriveTime": "16:51:00",
+      "SeatCount": 66,
+      "StationsBy": "16:40:00,16:51:00,16:59:00,00:00:00,00:00:00,00:00:00,17:40:00,00:00:00,00:00:00,00:00:00,18:18:00,18:30:00",
+      "StartTime": "16:40:00"
+    },
+    {
+      "Order": "F845",
+      "ArriveTime": "17:11:00",
+      "SeatCount": 66,
+      "StationsBy": "17:00:00,17:11:00,17:19:00,17:34:00,17:47:00,17:58:00,18:17:00,18:30:00,18:41:00,18:55:00,19:13:00,19:25:00",
+      "StartTime": "17:00:00"
+    },
+    {
+      "Order": "D667",
+      "ArriveTime": "17:21:00",
+      "SeatCount": 66,
+      "StationsBy": "17:10:00,17:21:00,17:29:00,17:43:00,17:56:00,00:00:00,18:25:00,00:00:00,00:00:00,18:50:00,19:07:00,19:20:00",
+      "StartTime": "17:10:00"
+    },
+    {
+      "Order": "B149",
+      "ArriveTime": "17:31:00",
+      "SeatCount": 66,
+      "StationsBy": "17:20:00,17:31:00,17:39:00,00:00:00,00:00:00,00:00:00,18:20:00,00:00:00,00:00:00,00:00:00,00:00:00,19:05:00",
+      "StartTime": "17:20:00"
+    },
+    {
+      "Order": "D669",
+      "ArriveTime": "17:46:00",
+      "SeatCount": 66,
+      "StationsBy": "17:35:00,17:46:00,17:55:00,18:10:00,18:22:00,00:00:00,18:48:00,00:00:00,00:00:00,19:14:00,19:33:00,19:45:00",
+      "StartTime": "17:35:00"
+    },
+    {
+      "Order": "F849",
+      "ArriveTime": "18:11:00",
+      "SeatCount": 66,
+      "StationsBy": "18:00:00,18:11:00,18:19:00,18:34:00,18:47:00,18:58:00,19:17:00,19:30:00,19:41:00,19:55:00,20:13:00,20:25:00",
+      "StartTime": "18:00:00"
+    },
+    {
+      "Order": "D673",
+      "ArriveTime": "18:21:00",
+      "SeatCount": 66,
+      "StationsBy": "18:10:00,18:21:00,18:29:00,18:43:00,18:56:00,00:00:00,19:25:00,00:00:00,00:00:00,19:50:00,20:07:00,20:20:00",
+      "StartTime": "18:10:00"
+    },
+    {
+      "Order": "B153",
+      "ArriveTime": "18:31:00",
+      "SeatCount": 66,
+      "StationsBy": "18:20:00,18:31:00,18:39:00,00:00:00,00:00:00,00:00:00,19:20:00,00:00:00,00:00:00,00:00:00,00:00:00,20:05:00",
+      "StartTime": "18:20:00"
+    },
+    {
+      "Order": "D675",
+      "ArriveTime": "18:46:00",
+      "SeatCount": 66,
+      "StationsBy": "18:35:00,18:46:00,18:55:00,19:10:00,19:22:00,00:00:00,19:48:00,00:00:00,00:00:00,20:14:00,20:33:00,20:45:00",
+      "StartTime": "18:35:00"
+    },
+    {
+      "Order": "B'249",
+      "ArriveTime": "18:51:00",
+      "SeatCount": 66,
+      "StationsBy": "18:40:00,18:51:00,18:59:00,00:00:00,00:00:00,00:00:00,19:40:00,00:00:00,00:00:00,00:00:00,20:18:00,20:30:00",
+      "StartTime": "18:40:00"
+    },
+    {
+      "Order": "F853",
+      "ArriveTime": "19:11:00",
+      "SeatCount": 66,
+      "StationsBy": "19:00:00,19:11:00,19:19:00,19:34:00,19:47:00,19:58:00,20:17:00,20:30:00,20:41:00,20:55:00,21:13:00,21:25:00",
+      "StartTime": "19:00:00"
+    },
+    {
+      "Order": "B157",
+      "ArriveTime": "19:31:00",
+      "SeatCount": 66,
+      "StationsBy": "19:20:00,19:31:00,19:39:00,00:00:00,00:00:00,00:00:00,20:20:00,00:00:00,00:00:00,00:00:00,00:00:00,21:05:00",
+      "StartTime": "19:20:00"
+    },
+    {
+      "Order": "D681",
+      "ArriveTime": "19:46:00",
+      "SeatCount": 66,
+      "StationsBy": "19:35:00,19:46:00,19:55:00,20:10:00,20:22:00,00:00:00,20:48:00,00:00:00,00:00:00,21:14:00,21:33:00,21:45:00",
+      "StartTime": "19:35:00"
+    },
+    {
+      "Order": "F857",
+      "ArriveTime": "20:11:00",
+      "SeatCount": 66,
+      "StationsBy": "20:00:00,20:11:00,20:19:00,20:34:00,20:47:00,20:58:00,21:17:00,21:30:00,21:41:00,21:55:00,22:13:00,22:25:00",
+      "StartTime": "20:00:00"
+    },
+    {
+      "Order": "B161",
+      "ArriveTime": "20:31:00",
+      "SeatCount": 66,
+      "StationsBy": "20:20:00,20:31:00,20:39:00,00:00:00,00:00:00,00:00:00,21:20:00,00:00:00,00:00:00,00:00:00,00:00:00,22:05:00",
+      "StartTime": "20:20:00"
+    },
+    {
+      "Order": "D687",
+      "ArriveTime": "20:46:00",
+      "SeatCount": 66,
+      "StationsBy": "20:35:00,20:46:00,20:55:00,21:10:00,21:22:00,00:00:00,21:48:00,00:00:00,00:00:00,22:14:00,22:33:00,22:45:00",
+      "StartTime": "20:35:00"
+    },
+    {
+      "Order": "F861",
+      "ArriveTime": "21:11:00",
+      "SeatCount": 66,
+      "StationsBy": "21:00:00,21:11:00,21:19:00,21:34:00,21:47:00,21:58:00,22:17:00,22:30:00,22:41:00,22:55:00,23:13:00,23:25:00",
+      "StartTime": "21:00:00"
+    },
+    {
+      "Order": "B165",
+      "ArriveTime": "21:31:00",
+      "SeatCount": 66,
+      "StationsBy": "21:20:00,21:31:00,21:39:00,00:00:00,00:00:00,00:00:00,22:20:00,00:00:00,00:00:00,00:00:00,00:00:00,23:05:00",
+      "StartTime": "21:20:00"
+    },
+    {
+      "Order": "D693",
+      "ArriveTime": "21:41:00",
+      "SeatCount": 66,
+      "StationsBy": "21:30:00,21:41:00,21:50:00,22:05:00,22:17:00,00:00:00,22:43:00,00:00:00,00:00:00,23:09:00,23:28:00,23:40:00",
+      "StartTime": "21:30:00"
+    },
+    {
+      "Order": "C333",
+      "ArriveTime": "21:56:00",
+      "SeatCount": 66,
+      "StationsBy": "21:45:00,21:56:00,00:00:00,22:15:00,00:00:00,00:00:00,22:49:00,23:01:00,23:12:00,23:24:00,23:42:00,23:55:00",
+      "StartTime": "21:45:00"
+    },
+    {
+      "Order": "B'295",
+      "ArriveTime": "22:16:00",
+      "SeatCount": 66,
+      "StationsBy": "22:05:00,22:16:00,00:00:00,22:35:00,00:00:00,00:00:00,23:07:00,00:00:00,00:00:00,23:30:00,23:48:00,23:59:00",
+      "StartTime": "22:05:00"
+    },
+    {
+      "Order": "E565",
+      "ArriveTime": "22:26:00",
+      "SeatCount": 66,
+      "StationsBy": "22:15:00,22:26:00,22:35:00,22:48:00,23:00:00,23:12:00,23:29:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00",
+      "StartTime": "22:15:00"
+    },
+    {
+      "Order": "E567",
+      "ArriveTime": "23:00:00",
+      "SeatCount": 66,
+      "StationsBy": "22:50:00,23:00:00,23:08:00,23:21:00,23:32:00,23:43:00,23:59:00,00:00:00,00:00:00,00:00:00,00:00:00,00:00:00",
+      "StartTime": "22:50:00"
+    }
+  ],
+  "TicketPrice": "260,130,0,0,0"
+}
+
+2. CheckID
+格式規定
+Client:
+CommandType只能是CheckID
+我把姓名和性別砍掉了，高鐵系統訂票好像不用(?反正我資料庫沒存，真的有需要我再開欄位
+Server:
+Status只會是{True,False}之一，如果是False則不保證後續屬性存在和正確與否
+New只會是{True,False}之一，當該ID不存在會新增資料，此時New為True，否則False
+Update只會是{True,False}之一，當ID已經存在但有資料不相同時，用新資料複寫舊資料，此時Update為True，否則False
+ 
+測試資料
+ 
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "CheckID",
+  "ID": "A111111111",
+  "Phone": "0911111111",
+  "Email": "111@mail.com"
+}
+Server recall:
+{
+  "Status": "True",
+  "New": "False",
+  "Update": "False"
+}
+測試2:
+Client sends message:
+{
+  "CommandType": "CheckID",
+  "ID": "B111111111",
+  "Phone": "0911111111",
+  "Email": "111@mail.com"
+}
+Server recall:
+{
+  "Status": "True",
+  "New": "True",
+  "Update": "False"
+} 
+測試3:
+Client sends message:
+{
+  "CommandType": "CheckID",
+  "ID": "A111111111",
+  "Phone": "0711111111",
+  "Email": "111@mail.com"
+}
+Server recall:
+{
+  "Status": "True",
+  "New": "False",
+  "Update": "True"
+}
+ 
+3. Book
+格式規定
+Client:
+CommandType只能是{ Book }
+ID為身分證字號
+StartDate和BackDate只能是{年/月/日}，不能有任何空格
+StartStation和ArriveStation只能是{南港,台北,板橋,桃園,新竹,苗栗,台中,彰化,雲林,嘉義,台南,左營}之一
+Tickets只能是{全票,孩童,敬老,愛心,大學生}，就算0張也要寫0，範例{1,1,0,0,0}
+Order和BackOrder為車號
+Type只能是{商務車廂,標準車廂}之一
+Prefer只能是{無偏好,靠走道優先,靠窗優先}之一
+Server:
+Status只會是{True,False}之一，如果是False則不保證後續屬性存在和正確與否
+GoSeat和BackSeat，第N車第M個座位，會回傳{NcobinM}
+後面的{1,2,3,4,5}照順序對應{全票,孩童,敬老,愛心,大學生}
+RecordID訂位代號
+當位置不足導致訂位失敗，RecordID欄位為"NoSeat"
+ 
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "Book",
+  "ID": "A111111111",
+  "OneWayReturn": "True",
+  "StartDate": "2022/11/1",
+  "StartStation": "南港",
+  "ArriveStation": "台北",
+  "Tickets": "1,1,0,0,0",
+  "Order": "F809",
+  "Type": "商務車廂",
+  "Prefer": "無偏好"
+}
+Server recall:
+{
+  "Status": "True",
+  "GoSeat2": "6cabin10C",
+  "GoSeat1": "6cabin10A",
+  "GoSeat4": "",
+  "GoSeat3": "",
+  "RecordID": "23300000",
+  "GoSeat5": ""
+} 
+測試2:
+Client sends message:
+{
+  "CommandType": "Book",
+  "ID": "A111111111",
+  "OneWayReturn": "False",
+  "StartDate": "2022/11/1",
+  "BackDate": "2022/11/1",
+  "StartStation": "南港",
+  "ArriveStation": "台北",
+  "Tickets": "1,2,3,4,5",
+  "Order": "F809",
+  "BackOrder": "D684",
+  "Type": "商務車廂",
+  "Prefer": "無偏好"
+}
+Server recall:
+{
+  "Status": "True",
+  "GoSeat2": "6cabin10E,6cabin11A",
+  "BackSeat3": "6cabin10E,6cabin11A,6cabin11C",
+  "GoSeat1": "6cabin10D",
+  "BackSeat2": "6cabin10C,6cabin10D",
+  "GoSeat4": "6cabin12A,6cabin12C,6cabin12D,6cabin12E",
+  "BackSeat1": "6cabin10A",
+  "GoSeat3": "6cabin11C,6cabin11D,6cabin11E",
+  "RecordID": "23300001",
+  "GoSeat5": "6cabin13A,6cabin13C,6cabin13D,6cabin13E,6cabin14A",
+  "BackSeat5": "6cabin12D,6cabin12E,6cabin13A,6cabin13C,6cabin13D",
+  "BackSeat4": "6cabin11D,6cabin11E,6cabin12A,6cabin12C"
+} 
+測試3:
+Client sends message:
+{
+  "CommandType": "Book",
+  "ID": "A111111111",
+  "OneWayReturn": "False",
+  "StartDate": "2022/11/1",
+  "BackDate": "2022/11/1",
+  "StartStation": "南港",
+  "ArriveStation": "台北",
+  "Tickets": "9999,0,0,0,0",
+  "Order": "F809",
+  "BackOrder": "D684",
+  "Type": "商務車廂",
+  "Prefer": "無偏好"
+}
+Server recall:
+{
+  "Status": "True",
+  "GoSeat2": "",
+  "BackSeat3": "",
+  "GoSeat1": "",
+  "BackSeat2": "",
+  "GoSeat4": "",
+  "BackSeat1": "",
+  "GoSeat3": "",
+  "RecordID": "NoSeat",
+  "GoSeat5": "",
+  "BackSeat5": "",
+  "BackSeat4": ""
+} 
+4. TimeTable
+用GetTrains就好，那個已經包含這個的功能了。
+ 
+5. FindLose
+OnewayReturn在查不到資料的時候，值為"NoData"
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "FindLose",
+  "ID": "A111111111",
+  "BookID": "23300001"
+}
+Server recall:
+{
+  "Status": "True",
+  "Prices": "260,130,0,0,0",
+  "Type": "商務車廂",
+  "Data2": [
+    {
+      "ArriveStation": "南港",
+      "Order": "D684",
+      "StartStation": "台北",
+      "Seat5": "6cabin12D,6cabin12E,6cabin13A,6cabin13C,6cabin13D",
+      "ArriveTime": "22:10:00",
+      "StationsBy": "22:10:00,22:02:00,21:51:00,21:38:00,21:25:00,00:00:00,21:00:00,00:00:00,00:00:00,20:32:00,20:13:00,20:00:00",
+      "StartTime": "22:02:00",
+      "Seat2": "6cabin10C,6cabin10D",
+      "Seat1": "6cabin10A",
+      "Date": "2022-11-01T00:00:00",
+      "Seat4": "6cabin11D,6cabin11E,6cabin12A,6cabin12C",
+      "Seat3": "6cabin10E,6cabin11A,6cabin11C"
+    }
+  ],
+  "Tickets": "2,4,6,8,10",
+  "Data1": [
+    {
+      "ArriveStation": "台北",
+      "Order": "F809",
+      "StartStation": "南港",
+      "Seat5": "6cabin13A,6cabin13C,6cabin13D,6cabin13E,6cabin14A",
+      "ArriveTime": "08:11:00",
+      "StationsBy": "08:00:00,08:11:00,08:19:00,08:34:00,08:47:00,08:58:00,09:17:00,09:30:00,09:41:00,09:55:00,10:13:00,10:25:00",
+      "StartTime": "08:00:00",
+      "Seat2": "6cabin10E,6cabin11A",
+      "Seat1": "6cabin10D",
+      "Date": "2022-11-01T00:00:00",
+      "Seat4": "6cabin12A,6cabin12C,6cabin12D,6cabin12E",
+      "Seat3": "6cabin11C,6cabin11D,6cabin11E"
+    }
+  ],
+  "OnewayReturn": "True"
+}
+測試2:
+Client sends message:
+{
+  "CommandType": "FindLose",
+  "ID": "Hi",
+  "BookID": "OAO"
+}
+Server recall:
+{
+  "Status": "True",
+  "Prices": "",
+  "Type": "",
+  "Data2": "",
+  "Tickets": "",
+  "Data1": "",
+  "OnewayReturn": "NoData"
+} 
+6. FindCode
+可能有多個訂單號符合查詢條件，所以用Array
+測試1:
+Client sends message:
+{
+  "CommandType": "FindCode",
+  "StartStation": "南港",
+  "ArriveStation": "台北",
+  "StartDate": "2022/11/01",
+  "Order": "F809",
+  "ID": "A111111111"
+}
+Server recall:
+{
+  "Status": "True",
+  "Datas": [
+    {
+      "PayResult": "False",
+      "Code": "23300000"
+    },
+    {
+      "PayResult": "False",
+      "Code": "23300001"
+    }
+  ]
+}
+ 
+7. GetEditData
+用GetTrain
+ 
+8. Refund
+當該票存在、未付款且被刪除時，RefundResult為True，否則為False
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "Refund",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10A"
+}
+Server recall:
+{
+  "Status": "True",
+  "RefundResult": "True"
+}
+測試2:
+Client sends message:
+{
+  "CommandType": "Refund",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10A"
+}
+Server recall:
+{
+  "Status": "True",
+  "RefundResult": "False"
+}
+ 
+9.Pay
+只有當該訂單ID存在且沒被付款過PayResult為True，否則為False
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "Pay",
+  "BookID": "23300000"
+}
+Server recall:
+{
+  "Status": "True",
+  "PayResult": "True"
+}
+測試2:
+Client sends message:
+{
+  "CommandType": "Pay",
+  "BookID": "23300000"
+}
+Server recall:
+{
+  "Status": "True",
+  "PayResult": "False"
+}
+
+ 
+10. Use
+當該車票存在，已經付款，已經取票且未被使用的情況下，UseResult為True，否則為False
+以下為實際測試
+測試1:
+Client sends message:
+{
+  "CommandType": "Use",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10C"
+}
+Server recall:
+{
+  "Status": "True",
+  "UseResult": "True"
+}
+測試2:
+Client sends message:
+{
+  "CommandType": "Use",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10C"
+}
+Server recall:
+{
+  "Status": "True",
+  "UseResult": "False"
+}
+ 
+11.Edit
+OneWayReturn要給，用於指令解析的
+測試1:
+Client sends message:
+{
+  "CommandType": "Edit",
+  "BookID": "20221124122025A111111111",
+  "OneWayReturn": "False",
+  "StartDate": "2022/12/1",
+  "BackDate": "2022/12/1",
+  "Order": "F809",
+  "BackOrder": "D684"
+}
+Server recall:
+{
+  "Status": "True",
+  "GoSeat2": "6cabin10C,6cabin10D",
+  "BackSeat3": "6cabin10E,6cabin11A,6cabin11C",
+  "GoSeat1": "6cabin10A",
+  "BackSeat2": "6cabin10C,6cabin10D",
+  "GoSeat4": "6cabin11D,6cabin11E,6cabin12A,6cabin12C",
+  "BackSeat1": "6cabin10A",
+  "GoSeat3": "6cabin10E,6cabin11A,6cabin11C",
+  "GoSeat5": "6cabin12D,6cabin12E,6cabin13A,6cabin13C,6cabin13D",
+  "BackSeat5": "6cabin12D,6cabin12E,6cabin13A,6cabin13C,6cabin13D",
+  "BackSeat4": "6cabin11D,6cabin11E,6cabin12A,6cabin12C"
+}
+ 
+12.Take
+只有票存在且成功取票TakeResult為True，否則為False
+Client sends message:
+{
+  "CommandType": "Take",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10C"
+}
+Server recall:
+{
+  "Status": "True",
+  "TakeResult": "True"
+} 
+13.HasTake
+只有當票存在且被取過HasTakeResult為True，否則為False
+Client sends message:
+{
+  "CommandType": "HasTake",
+  "BookID": "23300000",
+  "Order": "F809",
+  "Seat": "6cabin10C"
+}
+Server recall:
+{
+  "Status": "True",
+  "HasTakeResult": "True"
+}
+
